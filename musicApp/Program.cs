@@ -1,9 +1,16 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using musicApp.Data.Entities;
+using musicApp.Data.Services;
 using PodcastAPI.Data;
 using PodcastAPI.Data.Extentions;
 using PodcastAPI.Data.IRepository;
 using PodcastAPI.Data.Services;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,10 +19,52 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    var jwtSecurityScheme = new OpenApiSecurityScheme
+    {
+        BearerFormat = "JWT",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = JwtBearerDefaults.AuthenticationScheme,
+        Description = "Put Bearer + your token in the box below",
+        Reference = new OpenApiReference
+        {
+            Id = JwtBearerDefaults.AuthenticationScheme,
+            Type = ReferenceType.SecurityScheme
+        }
+
+    };
+    c.AddSecurityDefinition(jwtSecurityScheme.Reference.Id, jwtSecurityScheme);
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            jwtSecurityScheme, Array.Empty<string>()
+        }
+    });
+});
+
+
+
 builder.Services.AddScoped<IContentRepository, ContentService>();
 builder.Services.AddScoped<IPhotoRepository, PhotoService>();
 builder.Services.AddScoped<ICreatorRepository, CreatorService>();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = false,
+            ValidateAudience = false,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWTSettings:TokenKey"]))
+        };
+    });
+builder.Services.AddAuthorization();
+builder.Services.AddScoped<TokenService>();
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection("CloudinarySettings"));
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
@@ -26,8 +75,18 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
     options.SuppressModelStateInvalidFilter = true;
 });
 
+builder.Services.AddIdentityCore<User>(option =>
+{
+    option.User.RequireUniqueEmail = true;
+    option.Password.RequireUppercase = false;
+    option.Password.RequireNonAlphanumeric = false;
+})
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<AppDbContext>();
+
 var app = builder.Build();
 //await AppInitializer.Seed(app);
+await AppInitializer.SeedUserManager(app);
 
 app.UseCors(builder =>
 {
@@ -42,11 +101,15 @@ app.UseCors(builder =>
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI( c=>
+    {
+        c.ConfigObject.AdditionalItems.Add("persistAuthorization", "true");
+    });
 }
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

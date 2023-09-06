@@ -1,9 +1,12 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using musicApp.Data.Entities;
 using PodcastAPI.Models;
 
 namespace PodcastAPI.Data
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext : IdentityDbContext<User>
     {
 
 
@@ -26,6 +29,14 @@ namespace PodcastAPI.Data
               .HasOne(c => c.Creator)
            .WithMany(cr => cr.Content_Creators)
            .HasForeignKey(ci => ci.CreatorId);
+
+            modelBuilder.Entity<IdentityRole>()
+                .HasData(
+                new IdentityRole { Name = "Member", NormalizedName = "MEMBER" },
+                new IdentityRole { Name = "Admin", NormalizedName = "ADMIN" }
+                );
+            base.OnModelCreating(modelBuilder);
+
         }
 
 

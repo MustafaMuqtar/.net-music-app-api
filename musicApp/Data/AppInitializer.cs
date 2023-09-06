@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using musicApp.Data.Entities;
 using PodcastAPI.Data.Enums;
 using PodcastAPI.Models;
 
@@ -12,6 +14,7 @@ namespace PodcastAPI.Data
             using (var serviceScope = applicationBuilder.ApplicationServices.CreateAsyncScope())
             {
                 var _dbContext = serviceScope.ServiceProvider.GetService<AppDbContext>();
+
 
                 await _dbContext.Database.EnsureCreatedAsync();
                 if (!await _dbContext.Contents.AnyAsync())
@@ -140,6 +143,42 @@ namespace PodcastAPI.Data
 
 
                     await _dbContext.SaveChangesAsync();
+                }
+
+
+            }
+        }
+
+
+
+
+        public static async Task SeedUserManager(IApplicationBuilder applicationBuilder)
+        {
+            using (var serviceScope = applicationBuilder.ApplicationServices.CreateAsyncScope())
+            {
+                var _userManager = serviceScope.ServiceProvider.GetRequiredService<UserManager<User>>();
+
+
+
+                if (!_userManager.Users.Any())
+                {
+                    var user = new User
+                    {
+                        UserName = "mustafa",
+                        Email = "mustafa@gmail.com"
+                    };
+
+                    await _userManager.CreateAsync(user, "mustafa123");
+                    await _userManager.AddToRoleAsync(user, "Member");
+
+                    var admin = new User
+                    {
+                        UserName = "admin",
+                        Email = "admin@gmail.com"
+                    };
+
+                    await _userManager.CreateAsync(admin, "mustafa123");
+                    await _userManager.AddToRolesAsync(admin, new[] { "Member", "Admin" });
                 }
             }
         }
