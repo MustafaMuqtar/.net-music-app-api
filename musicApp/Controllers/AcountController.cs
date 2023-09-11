@@ -28,7 +28,7 @@ namespace musicApp.Controllers
         [HttpPost("Login")]
         public async Task<ActionResult<UserVM>> Login(LoginVM loginVM)
         {
-            var user = await _userManager.FindByNameAsync(loginVM.Username);
+            var user = await _userManager.FindByEmailAsync(loginVM.Email);
             if (user == null || !await _userManager.CheckPasswordAsync(user, loginVM.Password))
             {
                 return Unauthorized();

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PodcastAPI.Data.IRepository;
 using PodcastAPI.Models.ViewModels;
 
@@ -30,6 +31,8 @@ namespace PodcastAPI.Controllers
             return Ok(_data);
         }
 
+
+        //[Authorize]
         [HttpPost]
         public async Task<IActionResult> AddASync([FromForm][FromBody] CreatorVM data)
         {
