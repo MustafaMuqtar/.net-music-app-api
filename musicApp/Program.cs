@@ -86,7 +86,7 @@ builder.Services.AddIdentityCore<User>(option =>
 
 var app = builder.Build();
 //await AppInitializer.Seed(app);
-await AppInitializer.SeedUserManager(app);
+//await AppInitializer.SeedUserManager(app);
 
 app.UseCors(builder =>
 {
@@ -101,7 +101,7 @@ app.UseCors(builder =>
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI( c=>
+    app.UseSwaggerUI(c =>
     {
         c.ConfigObject.AdditionalItems.Add("persistAuthorization", "true");
     });

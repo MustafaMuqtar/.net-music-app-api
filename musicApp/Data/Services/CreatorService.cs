@@ -87,6 +87,7 @@ namespace PodcastAPI.Data.Services
             }).FirstOrDefaultAsync();
 
             return _data;
+
         }
 
         public async Task<Creator> UpdateByIdAsync(int id, CreatorVM data)

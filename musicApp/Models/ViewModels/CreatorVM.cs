@@ -21,5 +21,15 @@
     }
 
 
+    public class TestVM
+    {
+       
+        public List<string> ContentImages { get; set; }
+        public List<string> ContentAudios { get; set; }
+        public List<string> ContentTitles { get; set; }
+
+    }
+
+
 
 }

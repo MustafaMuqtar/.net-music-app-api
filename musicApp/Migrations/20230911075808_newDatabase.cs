@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace musicApp.Migrations
 {
     /// <inheritdoc />
-    public partial class reDoneMigration : Migration
+    public partial class newDatabase : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -223,8 +223,8 @@ namespace musicApp.Migrations
                 columns: new[] { "Id", "ConcurrencyStamp", "Name", "NormalizedName" },
                 values: new object[,]
                 {
-                    { "662e6ed5-b7ea-4650-826c-dd358db5b148", null, "Member", "MEMBER" },
-                    { "9dc5aecf-5187-4554-aea8-e7e9ee953a0b", null, "Admin", "ADMIN" }
+                    { "44719000-2315-456f-9fe5-e7e6ad716914", null, "Admin", "ADMIN" },
+                    { "fc183dd2-df67-4448-8590-ec11a1b39f6b", null, "Member", "MEMBER" }
                 });
 
             migrationBuilder.CreateIndex(

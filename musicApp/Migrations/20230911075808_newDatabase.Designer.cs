@@ -12,8 +12,8 @@ using PodcastAPI.Data;
 namespace musicApp.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230906163147_reDoneMigration")]
-    partial class reDoneMigration
+    [Migration("20230911075808_newDatabase")]
+    partial class newDatabase
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -54,13 +54,13 @@ namespace musicApp.Migrations
                     b.HasData(
                         new
                         {
-                            Id = "662e6ed5-b7ea-4650-826c-dd358db5b148",
+                            Id = "fc183dd2-df67-4448-8590-ec11a1b39f6b",
                             Name = "Member",
                             NormalizedName = "MEMBER"
                         },
                         new
                         {
-                            Id = "9dc5aecf-5187-4554-aea8-e7e9ee953a0b",
+                            Id = "44719000-2315-456f-9fe5-e7e6ad716914",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         });
